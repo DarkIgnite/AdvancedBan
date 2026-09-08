@@ -25,7 +25,15 @@ AdvancedBan originally lacked historical IP tracking and comprehensive alt detec
 - **Staff Privacy Protection (`ab.alts.ip`):** IP addresses in `/alts` output are masked (e.g. `192.168.***.***`) unless the staff member has the `ab.alts.ip` permission.
 - **Pagination Support:** Support for `/alts <player> [page]` for accounts with many associated alts.
 
-### 2. ⚡ Paper 1.21.x & Modern Minecraft Compatibility
+### 2. 🛡️ Guard IP Geolocation Analysis (`/guard analyze <player>`)
+Analyze connection data and geolocate any player or IP:
+- **IP, Country & City Resolution:** Instantly resolves IP address to Country (with country code) and City via dual-provider lookup (`ipwho.is` with automatic fallback to `ip-api.com`).
+- **City Accuracy Percentage:** Displays the calculated accuracy percentage for the detected city (e.g. `Bekasi (88% keakuratan)`).
+- **Comprehensive Details:** Displays Region/State, ISP / Organization, Timezone, Online/Offline status, and detected alt accounts count.
+- **Privacy Masking (`ab.guard.ip`):** IP addresses are automatically masked unless the staff member has permission `ab.guard.ip`.
+- **In-Memory Caching:** Results are cached in-memory for instant lookups without lag or rate-limit issues.
+
+### 3. ⚡ Paper 1.21.x & Modern Minecraft Compatibility
 - Built and tested with **Java 21** and targeted for modern **Paper 1.21.x** backend servers.
 - Fully compatible with BungeeCord / Waterfall / Velocity setups where backend handles punishments.
 - Modernized Maven build configuration, plugins, and dependencies.
@@ -36,8 +44,10 @@ AdvancedBan originally lacked historical IP tracking and comprehensive alt detec
 
 | Command | Aliases | Permission | Description |
 | :--- | :--- | :--- | :--- |
+| `/guard analyze <player>` | `/abguard` | `ab.guard` | Analyzes player IP, country, city, accuracy %, region, ISP, and timezone. |
+| *(View unmasked IPs in Guard)* | - | `ab.guard.ip` | Displays unmasked IP addresses in `/guard analyze` results. |
 | `/alts <player> [page]` | `/alt`, `/altcheck` | `ab.alts` | Scans and lists all associated alt accounts with possibility levels and punishment status. |
-| *(View unmasked IPs)* | - | `ab.alts.ip` | Displays unmasked IP addresses in `/alts` lookup results. |
+| *(View unmasked IPs in Alts)* | - | `ab.alts.ip` | Displays unmasked IP addresses in `/alts` lookup results. |
 | *(Join Notifications)* | - | `ab.alts.notify` | Receives automatic staff alerts when players with known alts connect. |
 | `/check <player>` | - | `ab.check` | Shows active punishments and now also displays total detected alt count. |
 

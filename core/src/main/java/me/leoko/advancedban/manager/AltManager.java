@@ -160,6 +160,19 @@ public class AltManager {
         return detectAlts(targetUuid, targetName, targetIp).size();
     }
 
+    public String getLatestAddress(String uuid) {
+        if (uuid == null) return null;
+        try {
+            ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_LATEST_ADDRESS_BY_UUID, uuid);
+            if (rs != null && rs.next()) {
+                return rs.getString("ip");
+            }
+        } catch (SQLException e) {
+            Universal.get().debugSqlException(e);
+        }
+        return null;
+    }
+
     /**
      * Check and alert online staff when a player joins with alts.
      */

@@ -8,6 +8,7 @@ import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.commands.AltsProcessor;
+import me.leoko.advancedban.utils.commands.GuardProcessor;
 import me.leoko.advancedban.utils.commands.ListProcessor;
 import me.leoko.advancedban.utils.commands.PunishmentProcessor;
 import me.leoko.advancedban.utils.commands.RevokeByIdProcessor;
@@ -433,6 +434,20 @@ public enum Command {
             "Alts.Usage",
             "alts", "alt", "altcheck"),
 
+    GUARD("ab.guard",
+            ".*",
+            new CleanTabCompleter((user, args) -> {
+                if (args.length <= 1)
+                    return list("analyze", "help");
+                else if (args.length == 2 && args[0].equalsIgnoreCase("analyze"))
+                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]");
+                else
+                    return list();
+            }),
+            new GuardProcessor(),
+            "Guard.Usage",
+            "guard", "abguard"),
+
     SYSTEM_PREFERENCES("ab.systemprefs",
             ".*",
             null,
@@ -514,6 +529,8 @@ public enum Command {
                             mi.sendMessage(sender, "§8» §7Check all linked alt accounts for a user");
                             mi.sendMessage(sender, "§c/check [Name]");
                             mi.sendMessage(sender, "§8» §7Get all information about a user");
+                            mi.sendMessage(sender, "§c/guard analyze [Name]");
+                            mi.sendMessage(sender, "§8» §7Analyze player IP, country, city, and accuracy");
                             mi.sendMessage(sender, "§c/AdvancedBan <reload/help>");
                             mi.sendMessage(sender, "§8» §7Reloads the plugin or shows help page");
                             mi.sendMessage(sender, "§8");

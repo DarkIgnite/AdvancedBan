@@ -57,3 +57,6 @@ commands:
   alts:
     description: Check all alt accounts of a user
     aliases: [alt, altcheck]
+  guard:
+    description: Analyze player connection, IP, country, and city accuracy
+    aliases: [abguard]
