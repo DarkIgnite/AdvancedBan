@@ -136,3 +136,15 @@ Disable Prefix: false
 # Off by default, so AdvancedBan can override /ban from other plugins
 # This is a Bukkit-specific option. It has no meaning on BungeeCord
 Friendly Register Commands: false
+
+# Alt accounts detection and notification settings (LibertyBans-style)
+Alts:
+  # Whether to alert online staff (ab.alts.notify) when a player with detected alts joins
+  AlertOnJoin: true
+  # If set to true, only alert if at least one of the detected alts has an active punishment (banned/muted)
+  AlertOnlyPunished: false
+  # Maximum number of alt accounts to display in the join notification
+  AlertLimit: 5
+  # Number of alts to display per page for /alts command
+  PerPage: 10
+

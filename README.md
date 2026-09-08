@@ -1,47 +1,83 @@
-# AdvancedBan
+# AdvancedBan (LibertyBans Alts Edition - Paper 1.21+ & Java 21)
 
+An enhanced fork of [DevLeoko/AdvancedBan](https://github.com/DevLeoko/AdvancedBan) bringing **LibertyBans-style Alt Account Detection**, **Paper 1.21+ support**, and modern **Java 17/21** compatibility.
 
-Bukkit- & BungeeCord-Plugin at once <br>
-Check out our [Spigot-Page](https://www.spigotmc.org/resources/advancedban.8695/) for more  information!
-
-![Minecraft Version 1.7-1.13](https://img.shields.io/badge/supports%20minecraft%20versions-1.7--1.16-brightgreen.svg)
+![Minecraft Version 1.7-1.21.x](https://img.shields.io/badge/Minecraft-1.7--1.21.x-brightgreen.svg)
+![Java Version 17/21](https://img.shields.io/badge/Java-17%20%7C%2021-orange.svg)
 ![license GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-lightgrey.svg)
-[![CircleCI](https://circleci.com/gh/DevLeoko/AdvancedBan.svg?style=svg)](https://circleci.com/gh/DevLeoko/AdvancedBan)
 
-_Coded by Leoko_ 
+---
 
-## Description
-AdvancedBan is an All-In-One Punishment-System with warns, tempwarns, mutes, tempmutes, bans, tempbans, ipbans and kicks.
-There is also a PlayerHistory so you can see the players past punishments and 
-the plugin has configurable Time & Message-Layouts which automatically calculate and increase the Punishment-Time for certain reasons.
-AdvancedBan provides also a full Message-File so you can change and translate all messages & a detailed config-file with a lot of useful settings.
-This is a BungeeCord & Bukkit/Spigot-Plugin in one and it supports MySQL and Local-File-Storage.
+## 🌟 Fork Highlights & New Features
 
-## API
-To use the API you need to add AdvancedBan to your project and declare it as a dependency in the plugin.yml.
+### 1. 🔍 LibertyBans-Style Alt Account Detection (`/alts`)
+AdvancedBan originally lacked historical IP tracking and comprehensive alt detection. This fork ports the powerful multi-tier alt detection engine and formatting from [LibertyBans](https://github.com/A248/LibertyBans):
+- **Persistent IP & UUID History Tracking:** Logs every IP address associated with player connections in MySQL or HSQLDB (`Addresses` table).
+- **Two-Tier Possibility Levels (`NORMAL` vs `STRICT`):**
+  - `NORMAL` (Strong Possibility): Matches when accounts share the exact same current/most recent IP address.
+  - `STRICT` (Mere Possibility): Matches when accounts share a common historical IP address from the past.
+- **Dynamic Punishment-Based Formatting & Colors:**
+  - **Banned Alts:** Displayed in red italics (`&c&o`).
+  - **Muted Alts:** Displayed in yellow italics (`&e&o`).
+  - **Clean / Unpunished Alts:** Displayed in white/gray italics (`&7&o`).
+- **Interactive Hover & Click Details:** Hover over an alt to see their UUID, last seen timestamp, and current punishment status; click to run punishment checks.
+- **Staff Join Alerts:** When a player joins, staff with `ab.alts.notify` receive an alert showing known alt accounts and whether any are currently banned or muted.
+- **Staff Privacy Protection (`ab.alts.ip`):** IP addresses in `/alts` output are masked (e.g. `192.168.***.***`) unless the staff member has the `ab.alts.ip` permission.
+- **Pagination Support:** Support for `/alts <player> [page]` for accounts with many associated alts.
 
-Add AdvancedBan to you project by adding the AdvancedBan.jar to your build-path or as a:
-#### Maven dependency in your pom.xml
+### 2. ⚡ Paper 1.21.x & Modern Minecraft Compatibility
+- Built and tested with **Java 21** and targeted for modern **Paper 1.21.x** backend servers.
+- Fully compatible with BungeeCord / Waterfall / Velocity setups where backend handles punishments.
+- Modernized Maven build configuration, plugins, and dependencies.
 
-Example Usage from Jitpack:
-```xml
-<repositories>
-  <repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-  </repository>
-</repositories>
-...
-<dependency>
-  <groupId>com.github.DevLeoko</groupId>
-  <artifactId>AdvancedBan</artifactId>
-  <version>v2.3.0</version>
-</dependency>
+---
+
+## 💻 Commands & Permissions
+
+| Command | Aliases | Permission | Description |
+| :--- | :--- | :--- | :--- |
+| `/alts <player> [page]` | `/alt`, `/altcheck` | `ab.alts` | Scans and lists all associated alt accounts with possibility levels and punishment status. |
+| *(View unmasked IPs)* | - | `ab.alts.ip` | Displays unmasked IP addresses in `/alts` lookup results. |
+| *(Join Notifications)* | - | `ab.alts.notify` | Receives automatic staff alerts when players with known alts connect. |
+| `/check <player>` | - | `ab.check` | Shows active punishments and now also displays total detected alt count. |
+
+---
+
+## ⚙️ Configuration
+
+### `config.yml` additions:
+```yaml
+Alts:
+  AlertOnJoin: true         # Notify staff when a player with alts connects
+  AlertOnlyPunished: false  # Only notify staff if at least one alt is banned/muted
+  AlertLimit: 5             # Maximum number of alts to display in join notifications
+  PerPage: 8                # Number of alts per page in /alts
 ```
-Note: Jitpack also supports dependencies for gradle!
 
-[AdvancedBan on Jitpack](https://jitpack.io/#DevLeoko/AdvancedBan)
+### `Messages.yml` additions:
+Includes full LibertyBans-style customizable messages for `Alts.Header`, `Alts.Formatting.Layout`, `Alts.Formatting.NameDisplay`, `Alts.Formatting.Normal`, `Alts.Formatting.Strict`, `Alts.AlertOnJoin`, and `Check.Alts`.
 
+---
 
-You can use this API for both Spigot and Bungeecord plugins.
-Check out the [Java Docs](https://devleoko.github.io/AdvancedBan/) to get started.
+## 🔨 Building from Source
+
+### Prerequisites
+- JDK 17 or JDK 21
+- Apache Maven 3.8+
+
+```bash
+git clone https://github.com/DarkIgnite/AdvancedBan.git
+cd AdvancedBan
+mvn clean package -DskipTests
+```
+
+The compiled plugin jar will be generated at:
+- `bundle/target/AdvancedBan-Bundle-2.3.0-RELEASE.jar` (Universal plugin for Bukkit/Paper and BungeeCord)
+- `bukkit/target/AdvancedBan-Bukkit-2.3.0-RELEASE.jar` (Bukkit/Paper standalone)
+
+---
+
+## 📜 Original Credits
+- Original plugin created by [DevLeoko](https://github.com/DevLeoko/AdvancedBan).
+- Alt detection concepts and formatting inspired by [A248/LibertyBans](https://github.com/A248/LibertyBans).
+- Licensed under [GNU General Public License v3.0](LICENSE).

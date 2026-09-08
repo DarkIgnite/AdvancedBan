@@ -302,6 +302,31 @@ Check:
   BanReason: "  &cReason &8» &7%REASON%"
   Warn: "&cWarns &8» &7%COUNT%"
   Note: "&cNotes &8» &7%COUNT%"
+  Alts: "&cAlts &8» &7%COUNT% &8(&7/alts %NAME%&8)"
   NotFound: "&cSorry we have not been able to find %NAME%"
   Cached: "&a&ocached"
   NotCached: "&c&onot cached"
+
+Alts:
+  Usage: "&cUsage &8» &7&o/alts [Name] <Page>"
+  OutOfIndex: "&cThere is no page %PAGE%!"
+  NoEntries: "&c&oNo alt accounts found for %NAME%!"
+  Header:
+  - "%PREFIX% &7Alt account report for &c&o%TARGET%&7 follows."
+  - "&7&oStrong possibility &8- &7Same current address as target player"
+  - "&7&oMere possibility &8- &7Linked to target player by common past address"
+  Formatting:
+    Layout: "%RELEVANT_USER% &r&7(per %ADDRESS%) at %DATE_RECORDED% - %DETECTION_KIND%"
+    Normal: "&cStrong possibility"
+    Strict: "&eMere possibility"
+    NameDisplay:
+      Banned: "&c&o%USERNAME%"
+      Muted: "&e&o%USERNAME%"
+      NotPunished: "&f&o%USERNAME%"
+  Footer: "&7Page &e&o%CURRENT_PAGE% &7of &e&o%TOTAL_PAGES% &8| &7Listed alts: &e&o%COUNT%"
+  PageFooter: "&7Use &e&o/alts %TARGET% %NEXT_PAGE% &7to see the next page"
+  AlertOnJoin:
+    Header:
+    - "%PREFIX% &c&o%TARGET% &7may be an alt account. Linked accounts (%COUNT%):"
+    Entry: "  &8» %RELEVANT_USER% &8[&7%DETECTION_KIND%&8]"
+

@@ -161,7 +161,7 @@ public class TestMethods implements MethodInterface {
 
     @Override
     public void scheduleAsync(Runnable rn, long l1) {
-        fail("This method has not been setup for tests yet. Edit the me.leoko.advancedban.TestMethods Class! #14");
+        rn.run();
     }
 
     @Override

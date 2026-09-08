@@ -2,10 +2,12 @@ package me.leoko.advancedban.utils;
 
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
+import me.leoko.advancedban.manager.AltManager;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
+import me.leoko.advancedban.utils.commands.AltsProcessor;
 import me.leoko.advancedban.utils.commands.ListProcessor;
 import me.leoko.advancedban.utils.commands.PunishmentProcessor;
 import me.leoko.advancedban.utils.commands.RevokeByIdProcessor;
@@ -411,9 +413,25 @@ public enum Command {
                 MessageManager.sendMessage(sender, "Check.Warn", false, "COUNT", PunishmentManager.get().getCurrentWarns(uuid) + "");
 
                 MessageManager.sendMessage(sender, "Check.Note", false, "COUNT", PunishmentManager.get().getCurrentNotes(uuid) + "");
+                int altsCount = AltManager.get().getAltsCount(uuid, name, ip);
+                MessageManager.sendMessage(sender, "Check.Alts", false, "COUNT", altsCount + "", "NAME", name);
             },
             "Check.Usage",
             "check"),
+
+    ALTS("ab.alts",
+            "\\S+( [1-9][0-9]*)?",
+            new CleanTabCompleter((user, args) -> {
+                if (args.length == 1)
+                    return list(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]");
+                else if (args.length == 2)
+                    return list("<Page>");
+                else
+                    return list();
+            }),
+            new AltsProcessor(),
+            "Alts.Usage",
+            "alts", "alt", "altcheck"),
 
     SYSTEM_PREFERENCES("ab.systemprefs",
             ".*",
@@ -492,6 +510,8 @@ public enum Command {
                             mi.sendMessage(sender, "§8» §7See your or a users warnings");
                             mi.sendMessage(sender, "§c/notes [Name] <Page>");
                             mi.sendMessage(sender, "§8» §7See your or a users notes");
+                            mi.sendMessage(sender, "§c/alts [Name] <Page>");
+                            mi.sendMessage(sender, "§8» §7Check all linked alt accounts for a user");
                             mi.sendMessage(sender, "§c/check [Name]");
                             mi.sendMessage(sender, "§8» §7Get all information about a user");
                             mi.sendMessage(sender, "§c/AdvancedBan <reload/help>");

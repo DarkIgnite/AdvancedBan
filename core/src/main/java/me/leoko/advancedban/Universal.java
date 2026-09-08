@@ -70,6 +70,7 @@ public class Universal {
 
         try {
             DatabaseManager.get().setup(mi.getBoolean(mi.getConfig(), "UseMySQL", false));
+            AltManager.get().setup();
         } catch (Exception ex) {
             log("Failed enabling database-manager...");
             debugException(ex);
@@ -315,6 +316,8 @@ public class Universal {
 
         if (pt == null) {
             interimData.accept();
+            AltManager.get().recordConnection(uuid, name, ip);
+            AltManager.get().checkAndNotifyOnJoin(name, uuid, ip);
             return null;
         }
 

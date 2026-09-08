@@ -87,4 +87,16 @@ public enum PunishmentType {
     public boolean isIpOrientated() {
         return this == IP_BAN || this == TEMP_IP_BAN;
     }
+
+    public boolean isBan() {
+        return getBasic() == BAN;
+    }
+
+    public boolean isMute() {
+        return getBasic() == MUTE;
+    }
+
+    public boolean isWarning() {
+        return getBasic() == WARNING;
+    }
 }

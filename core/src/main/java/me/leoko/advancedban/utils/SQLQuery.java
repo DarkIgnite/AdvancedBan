@@ -127,6 +127,52 @@ public enum SQLQuery {
     SELECT_ALL_PUNISHMENTS_HISTORY_LIMIT(
             "SELECT * FROM `PunishmentHistory` ORDER BY `start` DESC LIMIT ?",
             "SELECT * FROM PunishmentHistory ORDER BY start DESC LIMIT ?"
+    ),
+    CREATE_TABLE_ADDRESSES(
+            "CREATE TABLE IF NOT EXISTS `Addresses` (" +
+            "`id` int NOT NULL AUTO_INCREMENT," +
+            "`uuid` VARCHAR(36) NOT NULL," +
+            "`name` VARCHAR(16) NOT NULL," +
+            "`ip` VARCHAR(45) NOT NULL," +
+            "`last_seen` BIGINT NOT NULL," +
+            "PRIMARY KEY (`id`)," +
+            "KEY `idx_uuid` (`uuid`)," +
+            "KEY `idx_ip` (`ip`))",
+
+            "CREATE TABLE IF NOT EXISTS Addresses (" +
+            "id INTEGER IDENTITY PRIMARY KEY," +
+            "uuid VARCHAR(36)," +
+            "name VARCHAR(16)," +
+            "ip VARCHAR(45)," +
+            "last_seen BIGINT)"
+    ),
+    SELECT_EXACT_ADDRESS(
+            "SELECT * FROM `Addresses` WHERE `uuid` = ? AND `ip` = ?",
+            "SELECT * FROM Addresses WHERE uuid = ? AND ip = ?"
+    ),
+    INSERT_ADDRESS(
+            "INSERT INTO `Addresses` (`uuid`, `name`, `ip`, `last_seen`) VALUES (?, ?, ?, ?)",
+            "INSERT INTO Addresses (uuid, name, ip, last_seen) VALUES (?, ?, ?, ?)"
+    ),
+    UPDATE_ADDRESS(
+            "UPDATE `Addresses` SET `name` = ?, `last_seen` = ? WHERE `uuid` = ? AND `ip` = ?",
+            "UPDATE Addresses SET name = ?, last_seen = ? WHERE uuid = ? AND ip = ?"
+    ),
+    SELECT_LATEST_ADDRESS_BY_UUID(
+            "SELECT `ip` FROM `Addresses` WHERE `uuid` = ? ORDER BY `last_seen` DESC",
+            "SELECT ip FROM Addresses WHERE uuid = ? ORDER BY last_seen DESC"
+    ),
+    SELECT_ALTS_BY_UUID(
+            "SELECT a.* FROM `Addresses` a WHERE a.`ip` IN (SELECT DISTINCT b.`ip` FROM `Addresses` b WHERE b.`uuid` = ?) AND a.`uuid` != ? ORDER BY a.`last_seen` DESC",
+            "SELECT a.id, a.uuid, a.name, a.ip, a.last_seen FROM Addresses a WHERE a.ip IN (SELECT DISTINCT b.ip FROM Addresses b WHERE b.uuid = ?) AND a.uuid != ? ORDER BY a.last_seen DESC"
+    ),
+    SELECT_ALTS_BY_IP(
+            "SELECT * FROM `Addresses` WHERE `ip` = ? AND `uuid` != ? ORDER BY `last_seen` DESC",
+            "SELECT * FROM Addresses WHERE ip = ? AND uuid != ? ORDER BY last_seen DESC"
+    ),
+    DELETE_ADDRESS_BY_UUID(
+            "DELETE FROM `Addresses` WHERE `uuid` = ?",
+            "DELETE FROM Addresses WHERE uuid = ?"
     );
 
     private String mysql;
