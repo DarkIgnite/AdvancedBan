@@ -63,6 +63,10 @@ public class DatabaseManager {
      * Shuts down the HSQLDB if used.
      */
     public void shutdown() {
+        if (dataSource == null) {
+            return;
+        }
+
         if (!useMySQL) {
             try(Connection connection = dataSource.getConnection(); final PreparedStatement statement = connection.prepareStatement("SHUTDOWN")){
                 statement.execute();

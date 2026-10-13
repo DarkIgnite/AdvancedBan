@@ -132,7 +132,7 @@ public class Universal {
                 File legacyStorage = new File(legacyDataDir, "storage.script");
 
                 if (!targetStorage.exists() && legacyStorage.exists()) {
-                    log("§e[Migration] Detected legacy AdvancedBan database! Migrating data to AdvancedBanReworked...");
+                    mi.log("§8[§cAdvancedBanReworked§8] §e[Migration] Detected legacy AdvancedBan database! Migrating data to AdvancedBanReworked...");
                     if (!targetDataDir.exists()) {
                         targetDataDir.mkdirs();
                     }
@@ -145,7 +145,7 @@ public class Universal {
                             }
                         }
                     }
-                    log("§a[Migration] Successfully imported legacy punishments and history database!");
+                    mi.log("§8[§cAdvancedBanReworked§8] §a[Migration] Successfully imported legacy punishments and history database!");
                 }
 
                 // Also copy configs if they don't exist yet
@@ -158,12 +158,12 @@ public class Universal {
                             dataFolder.mkdirs();
                         }
                         Files.copy(legacyCfg.toPath(), targetCfg.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-                        log("§a[Migration] Imported legacy " + cfg + "!");
+                        mi.log("§8[§cAdvancedBanReworked§8] §a[Migration] Imported legacy " + cfg + "!");
                     }
                 }
             }
         } catch (Exception ex) {
-            log("§c[Migration] Warning: Could not complete legacy migration: " + ex.getMessage());
+            mi.log("§8[§cAdvancedBanReworked§8] §c[Migration] Warning: Could not complete legacy migration: " + ex.getMessage());
         }
     }
 
@@ -444,7 +444,14 @@ public class Universal {
     }
 
     private void debugToFile(Object msg) {
-        File debugFile = new File(mi.getDataFolder(), "logs/latest.log");
+        if (logManager == null || mi == null || mi.getDataFolder() == null) {
+            return;
+        }
+        File logsDir = new File(mi.getDataFolder(), "logs");
+        if (!logsDir.exists()) {
+            logsDir.mkdirs();
+        }
+        File debugFile = new File(logsDir, "latest.log");
         if (!debugFile.exists()) {
             try {
                 debugFile.createNewFile();
