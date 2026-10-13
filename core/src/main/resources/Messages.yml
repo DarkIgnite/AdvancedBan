@@ -8,6 +8,7 @@ General:
   TimeLayoutM: "%M%min and %S%sec"
   TimeLayoutS: "%S% seconds"
   FailedFetch: "&cCould not fetch the UUID of %NAME%! See console for details."
+  SilentPrefix: "&7[Silent] "
 
 
 Ban:
@@ -349,4 +350,11 @@ Guard:
     Header: "&8[]=====[ &c&lGuard &8| &cCommand Help &8]=====[]"
     Analyze: "&c/guard analyze <Player> &8» &7Analisis detail IP, negara, kota, dan akurasi"
     Footer: "&8[]================================[]"
+
+Disguise:
+  Enabled: "&a[!] Mode Ban Disguise AKTIF! Notifikasi publik akan menampilkan &b%NAME%&a."
+  Disabled: "&c[!] Mode Ban Disguise NONAKTIF! Notifikasi publik akan menampilkan nama asli Anda."
+  StatusOn: "&e[!] Status Ban Disguise: &aAKTIF &7(Tampil sebagai &b%NAME%&7)"
+  StatusOff: "&e[!] Status Ban Disguise: &cNONAKTIF &7(Tampil sebagai nama asli)"
+  Usage: "&cPenggunaan &8» &7&o/bandisguise [toggle|on|off|status]"
 

@@ -71,6 +71,15 @@ public class UUIDManager {
         if (mode == FetcherMode.DISABLED)
             return name;
 
+        // Floodgate / Bedrock edition players start with '.' prefix
+        if (name.startsWith(".")) {
+            String internUUID = mi.getInternUUID(name);
+            if (internUUID != null && !internUUID.equalsIgnoreCase("none")) {
+                return internUUID;
+            }
+            return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString().replace("-", "");
+        }
+
         if (mode == FetcherMode.INTERN || mode == FetcherMode.MIXED) {
             String internUUID = mi.getInternUUID(name);
             if (mode == FetcherMode.INTERN || internUUID != null)

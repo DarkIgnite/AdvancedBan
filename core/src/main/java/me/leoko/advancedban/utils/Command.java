@@ -8,6 +8,7 @@ import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
 import me.leoko.advancedban.utils.commands.AltsProcessor;
+import me.leoko.advancedban.utils.commands.DisguiseProcessor;
 import me.leoko.advancedban.utils.commands.GuardProcessor;
 import me.leoko.advancedban.utils.commands.ListProcessor;
 import me.leoko.advancedban.utils.commands.PunishmentProcessor;
@@ -106,26 +107,35 @@ public enum Command {
             ".+",
             new PunishmentTabCompleter(false),
             input -> {
-                if (!Universal.get().getMethods().isOnline(input.getPrimaryData())) {
+                boolean silent = false;
+                String[] args = input.getArgs();
+                for (int i = 0; i < args.length && i < 2; i++) {
+                    if ("-s".equalsIgnoreCase(args[i])) {
+                        input.removeArgument(i);
+                        silent = true;
+                        break;
+                    }
+                }
+                if (input.getPrimary() == null || !Universal.get().getMethods().isOnline(input.getPrimaryData())) {
                     MessageManager.sendMessage(input.getSender(), "Kick.NotOnline", true,
                             "NAME", input.getPrimary());
                     return;
                 }
 
-                new PunishmentProcessor(PunishmentType.KICK).accept(input);
+                new PunishmentProcessor(PunishmentType.KICK, silent).accept(input);
             },
             PunishmentType.KICK.getConfSection("Usage"),
             "kick"),
 
     UN_BAN("ab." + PunishmentType.BAN.getName() + ".undo",
-            "\\S+",
+            "(-s )?\\S+",
             new BasicTabCompleter("[Name/IP]"),
             new RevokeProcessor(PunishmentType.BAN),
             "Un" + PunishmentType.BAN.getConfSection("Usage"),
             "unban"),
 
     UN_MUTE("ab." + PunishmentType.MUTE.getName() + ".undo",
-            "\\S+",
+            "(-s )?\\S+",
             new BasicTabCompleter(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]"),
             new RevokeProcessor(PunishmentType.MUTE),
             "Un" + PunishmentType.MUTE.getConfSection("Usage"),
@@ -447,6 +457,17 @@ public enum Command {
             new GuardProcessor(),
             "Guard.Usage",
             "guard", "abguard"),
+
+    BAN_DISGUISE("ab.bandisguise",
+            ".*",
+            new CleanTabCompleter((user, args) -> {
+                if (args.length <= 1)
+                    return list("toggle", "on", "off", "status");
+                return list();
+            }),
+            new DisguiseProcessor(),
+            "Disguise.Usage",
+            "bandisguise", "bdisguise"),
 
     SYSTEM_PREFERENCES("ab.systemprefs",
             ".*",

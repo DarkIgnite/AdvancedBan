@@ -1,5 +1,5 @@
-name: AdvancedBan
+name: AdvancedBanReworked
 version: ${project.version}
 main: ${project.groupId}.bungee.BungeeMain
-author: Leoko
+authors: [Leoko, DarkIgnite]
 softDepends: [RedisBungee, LuckPerms]

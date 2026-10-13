@@ -1,8 +1,8 @@
-name: AdvancedBan
+name: AdvancedBanReworked
 version: ${project.version}
 main: ${project.groupId}.bukkit.BukkitMain
-author: Leoko
-softdepend: [Vault]
+authors: [Leoko, DarkIgnite]
+softdepend: [Vault, Floodgate, floodgate]
 api-version: 1.13
 
 commands:
@@ -60,3 +60,6 @@ commands:
   guard:
     description: Analyze player connection, IP, country, and city accuracy
     aliases: [abguard]
+  bandisguise:
+    description: Toggle disguise mode to hide staff name in punishment broadcasts
+    aliases: [bdisguise]

@@ -148,3 +148,10 @@ Alts:
   # Number of alts to display per page for /alts command
   PerPage: 10
 
+# Ban Disguise settings (/bandisguise)
+# When active for a staff member, public punishment announcements and kick screens show DisguisedName
+# Internal punishment records, /banlist, /history, and /check will still display the real staff name.
+Disguise:
+  Enabled: true
+  DisguisedName: "CONSOLE"
+

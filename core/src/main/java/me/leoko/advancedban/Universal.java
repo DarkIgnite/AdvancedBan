@@ -63,6 +63,7 @@ public class Universal {
      */
     public void setup(MethodInterface mi) {
         this.mi = mi;
+        checkLegacyMigration();
         mi.loadFiles();
         logManager = new LogManager();
         UpdateManager.get().setup();
@@ -71,6 +72,7 @@ public class Universal {
         try {
             DatabaseManager.get().setup(mi.getBoolean(mi.getConfig(), "UseMySQL", false));
             AltManager.get().setup();
+            DisguiseManager.get().setup();
         } catch (Exception ex) {
             log("Failed enabling database-manager...");
             debugException(ex);
@@ -94,22 +96,74 @@ public class Universal {
         }
 
         if (mi.getBoolean(mi.getConfig(), "DetailedEnableMessage", true)) {
-            mi.log("\n \n&8[]=====[&7Enabling AdvancedBan&8]=====[]&r"
+            mi.log("\n \n&8[]=====[&7Enabling AdvancedBanReworked&8]=====[]&r"
                     + "\n&8| &cInformation:&r"
-                    + "\n&8|   &cName: &7AdvancedBan&r"
-                    + "\n&8|   &cDeveloper: &7Leoko&r"
+                    + "\n&8|   &cName: &7AdvancedBanReworked&r"
+                    + "\n&8|   &cDeveloper: &7Leoko & DarkIgnite&r"
                     + "\n&8|   &cVersion: &7" + mi.getVersion() + "&r"
                     + "\n&8|   &cStorage: &7" + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)") + "&r"
                     + "\n&8| &cSupport:&r"
-                    + "\n&8|   &cGithub: &7https://github.com/DevLeoko/AdvancedBan/issues &r"
-                    + "\n&8|   &cDiscord: &7https://discord.gg/ycDG6rS &r"
-                    + "\n&8| &cTwitter: &7@LeokoGar&r"
+                    + "\n&8|   &cGithub: &7https://github.com/DarkIgnite/AdvancedBan &r"
                     + "\n&8| &cUpdate:&r"
                     + "\n&8|   &7" + upt  + "&r"
                     + "\n&8[]================================[]&r\n ");
         } else {
-            mi.log("&cEnabling AdvancedBan on Version &7&r" + mi.getVersion());
-            mi.log("&cCoded by &7Leoko &8| &7Twitter: @LeokoGar&r");
+            mi.log("&cEnabling AdvancedBanReworked on Version &7&r" + mi.getVersion());
+            mi.log("&cCoded by &7Leoko & DarkIgnite&r");
+        }
+    }
+
+    /**
+     * Checks if a legacy AdvancedBan installation exists and automatically
+     * migrates the database files and configurations if this is a fresh setup.
+     */
+    private void checkLegacyMigration() {
+        try {
+            File dataFolder = mi.getDataFolder();
+            if (dataFolder == null) return;
+            File pluginsFolder = dataFolder.getParentFile();
+            if (pluginsFolder == null) return;
+
+            File legacyFolder = new File(pluginsFolder, "AdvancedBan");
+            if (legacyFolder.exists() && legacyFolder.isDirectory() && !dataFolder.getCanonicalPath().equalsIgnoreCase(legacyFolder.getCanonicalPath())) {
+                File targetDataDir = new File(dataFolder, "data");
+                File legacyDataDir = new File(legacyFolder, "data");
+                File targetStorage = new File(targetDataDir, "storage.script");
+                File legacyStorage = new File(legacyDataDir, "storage.script");
+
+                if (!targetStorage.exists() && legacyStorage.exists()) {
+                    log("§e[Migration] Detected legacy AdvancedBan database! Migrating data to AdvancedBanReworked...");
+                    if (!targetDataDir.exists()) {
+                        targetDataDir.mkdirs();
+                    }
+                    File[] files = legacyDataDir.listFiles();
+                    if (files != null) {
+                        for (File f : files) {
+                            if (f.isFile() && !f.getName().endsWith(".tmp")) {
+                                File targetFile = new File(targetDataDir, f.getName());
+                                Files.copy(f.toPath(), targetFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                            }
+                        }
+                    }
+                    log("§a[Migration] Successfully imported legacy punishments and history database!");
+                }
+
+                // Also copy configs if they don't exist yet
+                String[] configs = new String[]{"config.yml", "Messages.yml", "Layouts.yml"};
+                for (String cfg : configs) {
+                    File targetCfg = new File(dataFolder, cfg);
+                    File legacyCfg = new File(legacyFolder, cfg);
+                    if (!targetCfg.exists() && legacyCfg.exists()) {
+                        if (!dataFolder.exists()) {
+                            dataFolder.mkdirs();
+                        }
+                        Files.copy(legacyCfg.toPath(), targetCfg.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                        log("§a[Migration] Imported legacy " + cfg + "!");
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            log("§c[Migration] Warning: Could not complete legacy migration: " + ex.getMessage());
         }
     }
 
@@ -117,23 +171,22 @@ public class Universal {
      * Shutdown.
      */
     public void shutdown() {
+        DisguiseManager.get().save();
         DatabaseManager.get().shutdown();
 
         if (mi.getBoolean(mi.getConfig(), "DetailedDisableMessage", true)) {
-            mi.log("\n \n&8[]=====[&7Disabling AdvancedBan&8]=====[]"
+            mi.log("\n \n&8[]=====[&7Disabling AdvancedBanReworked&8]=====[]"
                     + "\n&8| &cInformation:"
-                    + "\n&8|   &cName: &7AdvancedBan"
-                    + "\n&8|   &cDeveloper: &7Leoko"
+                    + "\n&8|   &cName: &7AdvancedBanReworked"
+                    + "\n&8|   &cDeveloper: &7Leoko & DarkIgnite"
                     + "\n&8|   &cVersion: &7" + getMethods().getVersion()
                     + "\n&8|   &cStorage: &7" + (DatabaseManager.get().isUseMySQL() ? "MySQL (external)" : "HSQLDB (local)")
                     + "\n&8| &cSupport:"
-                    + "\n&8|   &cGithub: &7https://github.com/DevLeoko/AdvancedBan/issues"
-                    + "\n&8|   &cDiscord: &7https://discord.gg/ycDG6rS"
-                    + "\n&8| &cTwitter: &7@LeokoGar"
+                    + "\n&8|   &cGithub: &7https://github.com/DarkIgnite/AdvancedBan"
                     + "\n&8[]================================[]&r\n ");
         } else {
-            mi.log("&cDisabling AdvancedBan on Version &7" + getMethods().getVersion());
-            mi.log("&cCoded by Leoko &8| &7Twitter: @LeokoGar");
+            mi.log("&cDisabling AdvancedBanReworked on Version &7" + getMethods().getVersion());
+            mi.log("&cCoded by Leoko & DarkIgnite");
         }
     }
 

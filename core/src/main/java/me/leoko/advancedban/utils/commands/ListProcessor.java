@@ -45,19 +45,27 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
 
         MethodInterface mi = Universal.get().getMethods();
         final List<Punishment> punishments = listSupplier.apply(target);
-        if (punishments.isEmpty()) {
+        if (punishments == null || punishments.isEmpty()) {
             MessageManager.sendMessage(input.getSender(), config + ".NoEntries",
                     true, "NAME", name);
             return;
         }
 
-        punishments
-                .stream()
-                .filter(punishment -> punishment.isExpired() && !history)
-                .forEach(punishment -> {
-                    punishment.delete();
-                    punishments.remove(punishment);
-                });
+        if (!history) {
+            punishments
+                    .stream()
+                    .filter(punishment -> punishment != null && punishment.isExpired())
+                    .forEach(Punishment::delete);
+            punishments.removeIf(punishment -> punishment == null || punishment.isExpired());
+        } else {
+            punishments.removeIf(java.util.Objects::isNull);
+        }
+
+        if (punishments.isEmpty()) {
+            MessageManager.sendMessage(input.getSender(), config + ".NoEntries",
+                    true, "NAME", name);
+            return;
+        }
 
         int page = input.hasNext() ? Integer.parseInt(input.getPrimary()) : 1;
         if (punishments.size() / 5.0 + 1 <= page) {
@@ -78,6 +86,7 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
 
         for (int i = (page - 1) * 5; i < page * 5 && punishments.size() > i; i++) {
             Punishment punishment = punishments.get(i);
+            if (punishment == null) continue;
             String nameOrIp = punishment.getType().isIpOrientated() ? punishment.getName() + " / " +punishment.getUuid() : punishment.getName();
             List<String> entryLayout = MessageManager.getLayout(mi.getMessages(), config + ".Entry",
                     "PREFIX", prefix,

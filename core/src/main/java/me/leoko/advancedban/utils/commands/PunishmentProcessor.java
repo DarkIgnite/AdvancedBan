@@ -18,14 +18,20 @@ import static me.leoko.advancedban.utils.CommandUtils.*;
 
 public class PunishmentProcessor implements Consumer<Command.CommandInput> {
     private PunishmentType type;
+    private boolean forceSilent = false;
 
     public PunishmentProcessor(PunishmentType type) {
         this.type = type;
     }
 
+    public PunishmentProcessor(PunishmentType type, boolean forceSilent) {
+        this.type = type;
+        this.forceSilent = forceSilent;
+    }
+
     @Override
     public void accept(Command.CommandInput input) {
-        boolean silent = processTag(input, "-s");
+        boolean silent = forceSilent || processTag(input, "-s");
         String name = input.getPrimary();
 
         // extract target

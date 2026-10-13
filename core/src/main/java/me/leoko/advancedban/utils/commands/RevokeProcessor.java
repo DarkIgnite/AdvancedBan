@@ -20,6 +20,16 @@ public class RevokeProcessor implements Consumer<Command.CommandInput> {
 
     @Override
     public void accept(Command.CommandInput input) {
+        boolean silent = false;
+        String[] args = input.getArgs();
+        for (int i = 0; i < args.length && i < 2; i++) {
+            if ("-s".equalsIgnoreCase(args[i])) {
+                input.removeArgument(i);
+                silent = true;
+                break;
+            }
+        }
+
         String name = input.getPrimary();
 
         String target = name;
@@ -37,7 +47,7 @@ public class RevokeProcessor implements Consumer<Command.CommandInput> {
         }
 
         final String operator = Universal.get().getMethods().getName(input.getSender());
-        punishment.delete(operator, false, true);
+        punishment.delete(operator, false, true, silent);
         MessageManager.sendMessage(input.getSender(), "Un" + type.getName() + ".Done",
                 true, "NAME", name);
     }

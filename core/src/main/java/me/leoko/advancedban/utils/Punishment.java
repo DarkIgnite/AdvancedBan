@@ -3,6 +3,7 @@ package me.leoko.advancedban.utils;
 import me.leoko.advancedban.MethodInterface;
 import me.leoko.advancedban.Universal;
 import me.leoko.advancedban.manager.DatabaseManager;
+import me.leoko.advancedban.manager.DisguiseManager;
 import me.leoko.advancedban.manager.MessageManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
@@ -13,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Leoko @ dev.skamps.eu on 30.05.2016.
@@ -97,7 +99,9 @@ public class Punishment {
         }
 
         if (!silent) {
-            announce(cWarnings);
+            announce(cWarnings, false);
+        } else {
+            announce(cWarnings, true);
         }
 
         if (mi.isOnline(getName())) {
@@ -144,9 +148,14 @@ public class Punishment {
     }
 
     private void announce(int cWarnings) {
+        announce(cWarnings, false);
+    }
+
+    private void announce(int cWarnings, boolean silent) {
+        String displayOperator = getDisplayOperator();
         List<String> notification = MessageManager.getLayout(mi.getMessages(),
                 getType().getName() + ".Notification",
-                "OPERATOR", getOperator(),
+                "OPERATOR", displayOperator,
                 "PREFIX", mi.getBoolean(mi.getConfig(), "Disable Prefix", false) ? "" : MessageManager.getMessage("General.Prefix"),
                 "DURATION", getDuration(true),
                 "REASON", getReason(),
@@ -156,7 +165,18 @@ public class Punishment {
                 "DATE", getDate(start),
                 "COUNT", cWarnings + "");
 
-        mi.notify("ab.notify." + getType().getName(), notification);
+        if (silent) {
+            String silentPrefix = MessageManager.getMessage("General.SilentPrefix", "&7[Silent] ");
+            List<String> silentNotification = notification.stream()
+                    .map(line -> silentPrefix + line)
+                    .collect(Collectors.toList());
+            mi.notify("ab.notify.silent", silentNotification);
+            if (!silentNotification.isEmpty()) {
+                Universal.get().log(silentNotification.get(0));
+            }
+        } else {
+            mi.notify("ab.notify." + getType().getName(), notification);
+        }
     }
 
     public void delete() {
@@ -164,6 +184,10 @@ public class Punishment {
     }
 
     public void delete(String who, boolean massClear, boolean removeCache) {
+        delete(who, massClear, removeCache, false);
+    }
+
+    public void delete(String who, boolean massClear, boolean removeCache, boolean silent) {
         if (getType() == PunishmentType.KICK) {
             Universal.get().log("!! Failed deleting! You are not able to delete Kicks!");
             return;
@@ -182,9 +206,16 @@ public class Punishment {
         }
 
         if (who != null) {
+            String displayWho = DisguiseManager.get().getDisplayOperator(who);
             String message = MessageManager.getMessage("Un" + getType().getBasic().getConfSection("Notification"),
-                    true, "OPERATOR", who, "NAME", getName());
-            mi.notify("ab.undoNotify." + getType().getBasic().getName(), Collections.singletonList(message));
+                    true, "OPERATOR", displayWho, "NAME", getName());
+            if (silent) {
+                String silentPrefix = MessageManager.getMessage("General.SilentPrefix", "&7[Silent] ");
+                mi.notify("ab.undoNotify.silent", Collections.singletonList(silentPrefix + message));
+                Universal.get().log(silentPrefix + message);
+            } else {
+                mi.notify("ab.undoNotify." + getType().getBasic().getName(), Collections.singletonList(message));
+            }
 
             Universal.get().debug(who + " is deleting a punishment");
         }
@@ -199,7 +230,7 @@ public class Punishment {
         return MessageManager.getLayout(
                 isLayout ? mi.getLayouts() : mi.getMessages(),
                 isLayout ? "Message." + getReason().split(" ")[0].substring(1) : getType().getName() + ".Layout",
-                "OPERATOR", getOperator(),
+                "OPERATOR", getDisplayOperator(),
                 "PREFIX", mi.getBoolean(mi.getConfig(), "Disable Prefix", false) ? "" : MessageManager.getMessage("General.Prefix"),
                 "DURATION", getDuration(false),
                 "REASON", isLayout ? (getReason().split(" ").length < 2 ? "" : getReason().substring(getReason().split(" ")[0].length() + 1)) : getReason(),
@@ -264,6 +295,10 @@ public class Punishment {
 
     public String getUuid() {
         return this.uuid;
+    }
+
+    public String getDisplayOperator() {
+        return DisguiseManager.get().getDisplayOperator(this.operator);
     }
 
     public String getOperator() {
