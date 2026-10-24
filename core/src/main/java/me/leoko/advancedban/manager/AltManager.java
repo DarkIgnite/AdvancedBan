@@ -186,7 +186,7 @@ public class AltManager {
 
             // Only notify if there are alts (or if configured to only notify on punished alts)
             boolean onlyPunished = mi.getBoolean(mi.getConfig(), "Alts.AlertOnlyPunished", false);
-            if (onlyPunished && alts.stream().noneMatch(a -> a.getActivePunishment() != null)) {
+            if (onlyPunished && alts.stream().noneMatch(DetectedAlt::hasActivePunishment)) {
                 return;
             }
 

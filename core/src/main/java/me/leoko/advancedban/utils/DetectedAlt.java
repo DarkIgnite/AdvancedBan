@@ -44,11 +44,15 @@ public class DetectedAlt {
         return activePunishment;
     }
 
+    public boolean hasActivePunishment() {
+        return activePunishment != null && !activePunishment.isExpired();
+    }
+
     public boolean isBanned() {
-        return activePunishment != null && (activePunishment.getType().isBan() || activePunishment.getType().isTemp());
+        return hasActivePunishment() && activePunishment.getType().isBan();
     }
 
     public boolean isMuted() {
-        return activePunishment != null && activePunishment.getType().isMute();
+        return hasActivePunishment() && activePunishment.getType().isMute();
     }
 }
