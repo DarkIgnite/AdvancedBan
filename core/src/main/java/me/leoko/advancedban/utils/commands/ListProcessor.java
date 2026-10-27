@@ -57,6 +57,13 @@ public class ListProcessor implements Consumer<Command.CommandInput> {
                     .filter(punishment -> punishment != null && punishment.isExpired())
                     .forEach(Punishment::delete);
             punishments.removeIf(punishment -> punishment == null || punishment.isExpired());
+
+            java.util.Set<String> seenTargets = new java.util.HashSet<>();
+            punishments.removeIf(p -> {
+                if (p == null) return true;
+                String key = p.getType().getBasic().name() + ":" + (p.getUuid() != null ? p.getUuid().toLowerCase() : p.getName().toLowerCase());
+                return !seenTargets.add(key);
+            });
         } else {
             punishments.removeIf(java.util.Objects::isNull);
         }

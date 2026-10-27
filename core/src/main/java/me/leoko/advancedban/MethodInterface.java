@@ -416,4 +416,6 @@ public interface MethodInterface {
      * @return the boolean
      */
     boolean isUnitTesting();
+
+    default void pardonVanilla(String name, String target) {}
 }

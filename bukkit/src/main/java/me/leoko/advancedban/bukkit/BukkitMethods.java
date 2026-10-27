@@ -397,4 +397,21 @@ public class BukkitMethods implements MethodInterface {
     public boolean isUnitTesting() {
         return false;
     }
+
+    @Override
+    public void pardonVanilla(String name, String target) {
+        try {
+            org.bukkit.BanList nameBans = Bukkit.getBanList(org.bukkit.BanList.Type.NAME);
+            if (name != null) {
+                nameBans.pardon(name);
+            }
+            if (target != null && !target.equalsIgnoreCase(name)) {
+                nameBans.pardon(target);
+            }
+            org.bukkit.BanList ipBans = Bukkit.getBanList(org.bukkit.BanList.Type.IP);
+            if (target != null && target.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$|^[0-9a-fA-F.:]+$")) {
+                ipBans.pardon(target);
+            }
+        } catch (Throwable ignored) {}
+    }
 }

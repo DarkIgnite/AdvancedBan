@@ -85,12 +85,12 @@ public enum SQLQuery {
             "DELETE FROM Punishments WHERE end <= ? AND end != -1"
     ),
     SELECT_USER_PUNISHMENTS(
-            "SELECT * FROM `Punishments` WHERE `uuid` = ?",
-            "SELECT * FROM Punishments WHERE uuid = ?"
+            "SELECT * FROM `Punishments` WHERE `uuid` = ? OR LOWER(`name`) = LOWER(?)",
+            "SELECT * FROM Punishments WHERE uuid = ? OR LOWER(name) = LOWER(?)"
     ),
     SELECT_USER_PUNISHMENTS_HISTORY(
-            "SELECT * FROM `PunishmentHistory` WHERE `uuid` = ?",
-            "SELECT * FROM PunishmentHistory WHERE uuid = ?"
+            "SELECT * FROM `PunishmentHistory` WHERE `uuid` = ? OR LOWER(`name`) = LOWER(?)",
+            "SELECT * FROM PunishmentHistory WHERE uuid = ? OR LOWER(name) = LOWER(?)"
     ),
     SELECT_USER_PUNISHMENTS_WITH_IP(
             "SELECT * FROM `Punishments` WHERE `uuid` = ? OR `uuid` = ?",
@@ -115,6 +115,14 @@ public enum SQLQuery {
     SELECT_ALL_PUNISHMENTS(
             "SELECT * FROM `Punishments`",
             "SELECT * FROM Punishments"
+    ),
+    SELECT_ALL_PUNISHMENTS_ORDER_BY_ID_DESC(
+            "SELECT * FROM `Punishments` ORDER BY `id` DESC",
+            "SELECT * FROM Punishments ORDER BY id DESC"
+    ),
+    DELETE_USER_PUNISHMENTS_BY_BASIC_TYPE(
+            "DELETE FROM `Punishments` WHERE (`uuid` = ? OR LOWER(`name`) = LOWER(?)) AND (`punishmentType` = ? OR `punishmentType` = ?)",
+            "DELETE FROM Punishments WHERE (uuid = ? OR LOWER(name) = LOWER(?)) AND (punishmentType = ? OR punishmentType = ?)"
     ),
     SELECT_ALL_PUNISHMENTS_HISTORY(
             "SELECT * FROM `PunishmentHistory`",

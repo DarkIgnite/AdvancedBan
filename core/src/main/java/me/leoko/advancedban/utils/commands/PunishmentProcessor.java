@@ -68,7 +68,7 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
             reason = null;
 
         // check if punishment of this type is already active
-        if (alreadyPunished(target, type)) {
+        if (alreadyPunished(name, target, type)) {
             MessageManager.sendMessage(input.getSender(), type.getBasic().getName() + ".AlreadyDone",
                     true, "NAME", name);
             return;
@@ -174,10 +174,27 @@ public class PunishmentProcessor implements Consumer<Command.CommandInput> {
         return false;
     }
 
-    private static boolean alreadyPunished(String target, PunishmentType type) {
-        return (type.getBasic() == PunishmentType.MUTE && PunishmentManager.get().isMuted(target))
-                || (type.getBasic() == PunishmentType.BAN && PunishmentManager.get().isBanned(target));
+    private static boolean alreadyPunished(String name, String target, PunishmentType type) {
+        if (type.getBasic() == PunishmentType.MUTE) {
+            return PunishmentManager.get().isMuted(target) || (name != null && PunishmentManager.get().isMuted(name));
+        }
+        if (type.getBasic() == PunishmentType.BAN) {
+            if (PunishmentManager.get().isBanned(target) || (name != null && PunishmentManager.get().isBanned(name))) {
+                return true;
+            }
+            if (name != null) {
+                String ip = Universal.get().getIps().get(name.toLowerCase());
+                if (ip != null && PunishmentManager.get().isBanned(ip)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
     }
+
+
+
 
     private static class TimeCalculation {
         private String template;

@@ -39,6 +39,7 @@ public class PunishmentManager {
      */
     public void setup() {
         DatabaseManager.get().executeStatement(SQLQuery.DELETE_OLD_PUNISHMENTS, TimeManager.getTime());
+        deduplicatePunishments();
         // Seems useless as the Interim Data which get's loaded just is ignored
 //        for (Object player : mi.getOnlinePlayers()) {
 //            String name = mi.getName(player).toLowerCase();
@@ -125,7 +126,7 @@ public class PunishmentManager {
         if (isCached(target)) {
             for (Iterator<Punishment> iterator = (current ? punishments : history).iterator(); iterator.hasNext(); ) {
                 Punishment pt = iterator.next();
-                if ((put == null || put == pt.getType().getBasic()) && pt.getUuid().equals(target)) {
+                if ((put == null || put == pt.getType().getBasic()) && (pt.getUuid().equalsIgnoreCase(target) || pt.getName().equalsIgnoreCase(target))) {
                     if (!current || !pt.isExpired()) {
                         ptList.add(pt);
                     } else {
@@ -134,8 +135,10 @@ public class PunishmentManager {
                     }
                 }
             }
-        } else {
-            try (ResultSet rs = DatabaseManager.get().executeResultStatement(current ? SQLQuery.SELECT_USER_PUNISHMENTS : SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY, target)) {
+        }
+
+        if (ptList.isEmpty()) {
+            try (ResultSet rs = DatabaseManager.get().executeResultStatement(current ? SQLQuery.SELECT_USER_PUNISHMENTS : SQLQuery.SELECT_USER_PUNISHMENTS_HISTORY, target, target)) {
                 while (rs.next()) {
                     Punishment punishment = getPunishmentFromResultSet(rs);
                     if ((put == null || put == punishment.getType().getBasic()) && (!current || !punishment.isExpired())) {
@@ -430,4 +433,60 @@ public class PunishmentManager {
 //
 //        return end;
 //    }
+
+    /**
+     * Deduplicates active punishments in the database.
+     * Ensures only 1 active punishment per player exists.
+     */
+    public void deduplicatePunishments() {
+        try (ResultSet rs = DatabaseManager.get().executeResultStatement(SQLQuery.SELECT_ALL_PUNISHMENTS_ORDER_BY_ID_DESC)) {
+            if (rs == null) return;
+
+            Map<String, Integer> seen = new HashMap<>();
+            List<Integer> toDelete = new ArrayList<>();
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String uuid = rs.getString("uuid");
+                String typeStr = rs.getString("punishmentType");
+
+                PunishmentType type;
+                try {
+                    type = PunishmentType.valueOf(typeStr);
+                } catch (IllegalArgumentException e) {
+                    continue;
+                }
+                PunishmentType basicType = type.getBasic();
+
+                String keyUuid = (uuid != null && !uuid.trim().isEmpty()) ? (basicType.name() + ":uuid:" + uuid.toLowerCase().trim()) : null;
+                String keyName = (name != null && !name.trim().isEmpty()) ? (basicType.name() + ":name:" + name.toLowerCase().trim()) : null;
+
+                boolean duplicate = false;
+                if (keyUuid != null && seen.containsKey(keyUuid)) {
+                    duplicate = true;
+                } else if (keyName != null && seen.containsKey(keyName)) {
+                    duplicate = true;
+                }
+
+                if (duplicate) {
+                    toDelete.add(id);
+                } else {
+                    if (keyUuid != null) seen.put(keyUuid, id);
+                    if (keyName != null) seen.put(keyName, id);
+                }
+            }
+
+            if (!toDelete.isEmpty()) {
+                Universal.get().log("[AdvancedBan] Found " + toDelete.size() + " duplicate active punishment(s) in database. Cleaning up duplicates...");
+                for (int id : toDelete) {
+                    DatabaseManager.get().executeStatement(SQLQuery.DELETE_PUNISHMENT, id);
+                }
+                Universal.get().log("[AdvancedBan] Deduplication complete! Kept 1 active punishment per player.");
+            }
+        } catch (SQLException ex) {
+            Universal.get().log("AdvancedBan >> Failed to deduplicate punishments in database:");
+            Universal.get().debugSqlException(ex);
+        }
+    }
 }
