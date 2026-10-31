@@ -55,7 +55,16 @@ public class JailManager {
     public void loadJailConfig() {
         jailConfigFile = new File(plugin.getDataFolder(), "jail.yml");
         if (!jailConfigFile.exists()) {
-            plugin.saveResource("jail.yml", false);
+            if (plugin.getResource("jail.yml") != null) {
+                plugin.saveResource("jail.yml", false);
+            } else {
+                try {
+                    plugin.getDataFolder().mkdirs();
+                    jailConfigFile.createNewFile();
+                } catch (IOException e) {
+                    plugin.getLogger().log(java.util.logging.Level.SEVERE, "Could not create jail.yml", e);
+                }
+            }
         }
         jailConfig = YamlConfiguration.loadConfiguration(jailConfigFile);
 
