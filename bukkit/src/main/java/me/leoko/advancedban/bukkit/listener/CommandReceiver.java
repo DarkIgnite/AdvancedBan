@@ -19,11 +19,23 @@ public class CommandReceiver implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if (command.getName().equalsIgnoreCase("jail") && strings.length > 0) {
-            String first = strings[0].toLowerCase();
-            if (first.equals("wand") || first.equals("setspawn") || first.equals("setup") || first.equals("status")) {
-                JailManager.get().handleAdminCommand(commandSender, strings);
-                return true;
+        if (command.getName().equalsIgnoreCase("jail")) {
+            if (strings.length == 0) {
+                if (commandSender.hasPermission("ab.jail.setup") || commandSender.isOp()) {
+                    commandSender.sendMessage("§6§l[AdvancedBan Jail]");
+                    commandSender.sendMessage("§e/jail <pemain> [durasi] [alasan] §7- Penjarakan pemain");
+                    commandSender.sendMessage("§e/unjail <pemain> §7- Bebaskan pemain dari penjara");
+                    commandSender.sendMessage("§e/jail wand §7- Ambil wand untuk set area 2 titik");
+                    commandSender.sendMessage("§e/jail setspawn §7- Set titik spawn penjara");
+                    commandSender.sendMessage("§e/jail status §7- Cek status konfigurasi area penjara");
+                    return true;
+                }
+            } else {
+                String first = strings[0].toLowerCase();
+                if (first.equals("wand") || first.equals("setspawn") || first.equals("setup") || first.equals("status")) {
+                    JailManager.get().handleAdminCommand(commandSender, strings);
+                    return true;
+                }
             }
         }
 

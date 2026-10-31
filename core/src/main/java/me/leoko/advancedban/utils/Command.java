@@ -127,6 +127,29 @@ public enum Command {
             PunishmentType.KICK.getConfSection("Usage"),
             "kick"),
 
+    JAIL(
+            PunishmentType.JAIL.getPerms(),
+            ".+",
+            new PunishmentTabCompleter(false),
+            new PunishmentProcessor(PunishmentType.JAIL),
+            PunishmentType.JAIL.getConfSection("Usage"),
+            "jail"),
+
+    TEMP_JAIL(
+            PunishmentType.TEMP_JAIL.getPerms(),
+            "(-s )?\\S+ ?([1-9][0-9]*([wdhms]|mo)|#.+)( .*)?",
+            new PunishmentTabCompleter(true),
+            new PunishmentProcessor(PunishmentType.TEMP_JAIL),
+            PunishmentType.TEMP_JAIL.getConfSection("Usage"),
+            "tempjail"),
+
+    UN_JAIL("ab." + PunishmentType.JAIL.getName() + ".undo",
+            "(-s )?\\S+",
+            new BasicTabCompleter(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]"),
+            new RevokeProcessor(PunishmentType.JAIL),
+            "Un" + PunishmentType.JAIL.getConfSection("Usage"),
+            "unjail"),
+
     UN_BAN("ab." + PunishmentType.BAN.getName() + ".undo",
             "(-s )?\\S+",
             new BasicTabCompleter("[Name/IP]"),

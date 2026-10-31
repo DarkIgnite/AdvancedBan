@@ -80,7 +80,8 @@ public class DiscordWebhookManager {
 
                 String duration = type.isTemp() ? punishment.getDuration(true) : "Permanen";
                 String target = punishment.getName() != null ? punishment.getName() : punishment.getUuid();
-                String operator = punishment.getOperator() != null ? punishment.getOperator() : "Console";
+                String rawOp = punishment.getOperator() != null ? punishment.getOperator() : "Console";
+                String operator = me.leoko.advancedban.manager.DisguiseManager.get().getDisplayOperator(rawOp);
                 String reason = punishment.getReason() != null ? punishment.getReason() : "Tidak ada alasan";
                 String avatarUrl = "https://mc-heads.net/avatar/" + target + "/100";
 
@@ -116,7 +117,8 @@ public class DiscordWebhookManager {
             try {
                 String typeName = punishment.getType().getBasic().getName().toUpperCase();
                 String target = punishment.getName() != null ? punishment.getName() : punishment.getUuid();
-                String op = operator != null ? operator : "Console";
+                String rawOp = operator != null ? operator : "Console";
+                String op = me.leoko.advancedban.manager.DisguiseManager.get().getDisplayOperator(rawOp);
                 String avatarUrl = "https://mc-heads.net/avatar/" + target + "/100";
 
                 String payload = "{"
