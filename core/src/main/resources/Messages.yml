@@ -715,53 +715,52 @@ Disguise:
   StatusOff: "&e[!] Status Ban Disguise: &cNONAKTIF &7(Tampil sebagai nama asli)"
 
   Usage: "&cPenggunaan &8» &7&o/bandisguise [toggle|on|off|status]"
-
-
-
-
-
 Jail:
-
-  Usage: "&cUsage &8» &7&o/jail (-s) [Name] [Reason/@Layout]"
-
-  Done: "&c&o%NAME% &7berhasil dimasukkan ke dalam penjara!"
-
-  AlreadyDone: "&c&o%NAME% &7sudah berada di dalam penjara!"
-
-  Exempt: "&7You are not able to jail &c&o%NAME%"
-
+  Usage: "&cPenggunaan &8» &e/jail &7(-s) [Nama] [Alasan/@Layout]"
+  Done: "&c%NAME% &7berhasil dimasukkan ke dalam penjara!"
+  AlreadyDone: "&c%NAME% &7sudah berada di dalam penjara!"
+  Exempt: "&7Kamu tidak dapat memenjarakan &c%NAME%&7!"
+  Layout:
+  - '&8&m--------------------------------------------------'
+  - '&c&lLEFTYCRAFT &8» &4&lPENJARA PERMANEN'
+  - '&8&m--------------------------------------------------'
+  - ''
+  - '&cKamu telah dimasukkan ke dalam penjara!'
+  - ''
+  - '&c» &eAlasan &8» &f%REASON%'
+  - '&c» &eStaff  &8» &f%OPERATOR%'
+  - '&c» &eDurasi &8» &fPermanen'
+  - ''
+  - '&7Patuhi aturan server selama berada di area penjara.'
+  - '&8&m--------------------------------------------------'
   Notification:
-
-  - "&c&o%NAME% &7dipenjara oleh &e&o%OPERATOR%"
-
-  - "&7Alasan: &o%REASON%"
-
-  - "&7Durasi: &ePermanen"
-
-  UndoNotification: "&e&o%OPERATOR% &7mengeluarkan &c&o%NAME% &7dari penjara"
-
-
+  - '&c%NAME% &ftelah dipenjara oleh &e%OPERATOR% &fkarena &e%REASON%'
+  UndoNotification: '&e%OPERATOR% &7telah membebaskan &a%NAME% &7dari penjara'
 
 Tempjail:
-
-  Usage: "&cUsage &8» &7&o/tempjail (-s) [Name] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Reason/@Layout]"
-
-  Done: "&c&o%NAME% &7berhasil dimasukkan ke dalam penjara selama %DURATION%!"
-
+  Usage: "&cPenggunaan &8» &e/tempjail &7(-s) [Nama] [Xmo/Xd/Xh/Xm/Xs/#TimeLayout] [Alasan/@Layout]"
+  Done: "&c%NAME% &7berhasil dimasukkan ke dalam penjara selama &e%DURATION%&7!"
+  AlreadyDone: "&c%NAME% &7sudah berada di dalam penjara!"
+  Exempt: "&7Kamu tidak dapat memenjarakan &c%NAME%&7!"
+  MaxDuration: "&cDurasi maksimal penjara adalah %MAX% detik!"
+  Layout:
+  - '&8&m--------------------------------------------------'
+  - '&c&lLEFTYCRAFT &8» &c&lPENJARA SEMENTARA'
+  - '&8&m--------------------------------------------------'
+  - ''
+  - '&cKamu telah dimasukkan ke dalam penjara sementara!'
+  - ''
+  - '&c» &eAlasan &8» &f%REASON%'
+  - '&c» &eStaff  &8» &f%OPERATOR%'
+  - '&c» &eDurasi &8» &f%DURATION%'
+  - ''
+  - '&7Patuhi aturan server hingga masa tahanan berakhir.'
+  - '&8&m--------------------------------------------------'
   Notification:
-
-  - "&c&o%NAME% &7dipenjara oleh &e&o%OPERATOR%"
-
-  - "&7Alasan: &o%REASON%"
-
-  - "&7Durasi: &e%DURATION%"
-
-
+  - '&c%NAME% &ftelah dipenjara oleh &e%OPERATOR% &fselama &e%DURATION% &fkarena &e%REASON%'
 
 UnJail:
-
-  Usage: "&cUsage &8» &7&o/unjail (-s) [Name]"
-
-  Done: "&a&o%NAME% &7telah dibebaskan dari penjara!"
-  NotPunished: "&c&o%NAME% &7tidak sedang berada di dalam penjara!"
-
+  Usage: "&cPenggunaan &8» &e/unjail &7(-s) [Nama]"
+  NotPunished: "&c%NAME% &7tidak sedang berada di dalam penjara!"
+  Done: "&a%NAME% &7berhasil dibebaskan dari penjara!"
+  Notification: "&e%OPERATOR% &7telah membebaskan &a%NAME% &7dari penjara"

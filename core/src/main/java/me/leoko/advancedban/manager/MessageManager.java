@@ -30,7 +30,7 @@ public class MessageManager {
         String str = mi.getString(mi.getMessages(), path);
         if (str == null) {
             str = "Failed! See console for details!";
-            System.out.println("!! Message-Error!\n"
+            System.out.println("!! Message-Error for key '" + path + "'!\n"
                     + "In order to solve the problem please:"
                     + "\n  - Check the Message.yml-File for any missing or double \" or '"
                     + "\n  - Visit yamllint.com to  validate your Message.yml"
@@ -80,7 +80,7 @@ public class MessageManager {
             return list;
         }
         String fileName = mi.getFileName(file);
-		System.out.println("!! Message-Error in " + fileName + "!\n"
+		System.out.println("!! Message-Error in " + fileName + " for key '" + path + "'!\n"
 		        + "In order to solve the problem please:"
 		        + "\n  - Check the " + fileName + "-File for any missing or double \" or '"
 		        + "\n  - Visit yamllint.com to  validate your " + fileName
