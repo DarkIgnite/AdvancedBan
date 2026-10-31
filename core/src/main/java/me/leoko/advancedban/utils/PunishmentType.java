@@ -13,7 +13,9 @@ public enum PunishmentType {
     WARNING("Warn", null, false, "ab.warn.perma"),
     TEMP_WARNING("Tempwarn", WARNING, true, "ab.warn.temp"),
     KICK("Kick", null, false, "ab.kick.use"),
-    NOTE("Note", null, false, "ab.note.use");
+    NOTE("Note", null, false, "ab.note.use"),
+    JAIL("Jail", null, false, "ab.jail.perma"),
+    TEMP_JAIL("Tempjail", JAIL, true, "ab.jail.temp");
 
     private final String name;
     private final String perms;
@@ -28,7 +30,7 @@ public enum PunishmentType {
     }
 
     public static PunishmentType fromCommandName(String cmd) {
-        switch (cmd) {
+        switch (cmd.toLowerCase()) {
             case "ban":
                 return BAN;
             case "tempban":
@@ -52,6 +54,10 @@ public enum PunishmentType {
                 return TEMP_WARNING;
             case "kick":
                 return KICK;
+            case "jail":
+                return JAIL;
+            case "tempjail":
+                return TEMP_JAIL;
             default:
                 return null;
         }
@@ -70,7 +76,7 @@ public enum PunishmentType {
     }
 
     public String getConfSection(String path) {
-        return name+"."+path;
+        return name + "." + path;
     }
 
     public PunishmentType getBasic() {
@@ -78,7 +84,7 @@ public enum PunishmentType {
     }
 
     public PunishmentType getPermanent() {
-        if(this == IP_BAN || this == TEMP_IP_BAN)
+        if (this == IP_BAN || this == TEMP_IP_BAN)
             return IP_BAN;
 
         return getBasic();
@@ -98,5 +104,9 @@ public enum PunishmentType {
 
     public boolean isWarning() {
         return getBasic() == WARNING;
+    }
+
+    public boolean isJail() {
+        return getBasic() == JAIL;
     }
 }
